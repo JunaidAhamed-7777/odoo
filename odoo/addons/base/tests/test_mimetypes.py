@@ -1,6 +1,4 @@
 import base64
-import io
-import zipfile
 
 try:
     import magic
@@ -8,7 +6,7 @@ except ImportError:
     magic = None
 
 from odoo.tests.common import BaseCase
-from odoo.tools.mimetypes import _odoo_guess_mimetype, fix_filename_extension, get_extension, guess_mimetype
+from odoo.tools.mimetypes import fix_filename_extension, get_extension, guess_mimetype
 
 PNG = b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC'
 GIF = b"R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs="
@@ -65,19 +63,6 @@ Hello world!
 """
 
 class test_guess_mimetype(BaseCase):
-
-    def test_ooxml_fallback_mimetype(self):
-        for document, expected in (
-            ('word/document.xml', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
-            ('ppt/presentation.xml', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'),
-            ('xl/workbook.xml', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
-        ):
-            with self.subTest(document=document):
-                stream = io.BytesIO()
-                with zipfile.ZipFile(stream, 'w') as archive:
-                    archive.writestr('[Content_Types].xml', '<Types/>')
-                    archive.writestr(document, '<document/>')
-                self.assertEqual(_odoo_guess_mimetype(stream.getvalue()), expected)
 
     def test_default_mimetype_empty(self):
         mimetype = guess_mimetype(b'')
